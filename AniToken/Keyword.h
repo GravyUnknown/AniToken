@@ -2,7 +2,7 @@
 #include <map>
 #include <array>
 #include <string>
-class Keywords {
+namespace Keywords {
 	enum class Descriptors
 	{
 		AudioCodec,
@@ -11,6 +11,7 @@ class Keywords {
 		SeriesName,
 		EpisodeTitle,
 		ReleaseGroup,
+		FileExtension
 
 	};
 
@@ -25,6 +26,8 @@ static constexpr std::array<keyword_t, 3> base_keywords = { {
 	{"H.264", Descriptors::VideoCodec},
 	{"FLAC", Descriptors::AudioCodec}
 } };
+
+
 
 
 };

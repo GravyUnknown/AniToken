@@ -1,6 +1,7 @@
 #include "Tokenizer.h"
 #include "Identifier.h"
 #include "Token.h"
+#include "Keyword.h"
 #include <iterator>
 #include <algorithm>
 
@@ -9,17 +10,17 @@ using namespace Identifiers;
 Tokenizer::Tokenizer(std::string_view filename)
 	:input(filename)
 {
-	for (int i = 0; i < filename.size(); i++)
+	while(!input.empty())
 	{
-		item_list.emplace_back(Tokenize());
+		token_list.emplace_back(Tokenize());
 	}
+
 }
 
 Items::Item Tokenizer::Tokenize()
 {
-	bool next_token_enclosed = false;
-
-	if (is_open_bracket(peek()))
+	auto current = peek();
+	if (is_open_bracket(current))
 	{
 		next_token_enclosed = true;
 		return Items::Item{
@@ -28,7 +29,7 @@ Items::Item Tokenizer::Tokenize()
 		};
 	};
 
-	if (is_close_bracket(peek()))
+	if (is_close_bracket(current))
 	{
 		next_token_enclosed = false;
 		return Items::Item{
@@ -37,36 +38,57 @@ Items::Item Tokenizer::Tokenize()
 		};
 	};
 
+	if(separator == '\0') {
+		if (is_separator(current))
+		{
+			separator = current;
+			/*	if (separator.empty())
+				{
+					find_separator(peek());
+				}*/
+		}
+	}
 
-	if (is_separator(peek()))
+	if (current == separator)
 	{
-		/*	if (separator.empty())
-			{
-				find_separator(peek());
-			}*/
-
-		return Items::Item{
+		return Items::Item
+		{
 			.type = Tokens::TokenType::Separator,
-			.value = take()
+			.value = take(),
+			.is_enclosed = next_token_enclosed,
+			.is_identified = true,
+
 		};
 
+	}
 
-	};
+	if (const auto& [key, type] = find_keywords(); !key.empty())
+	{
+		return Items::Item
+		{
+			.type = static_cast<Tokens::TokenType>(type),
+			.value = key,
+			.is_enclosed = next_token_enclosed,
+			.is_identified = true
+		};
+	}
 
 	if (next_token_enclosed)
 	{
 		return Items::Item
 		{
 			.type = Tokens::TokenType::Text,
-			.value = take_text(next_token_enclosed),
+			.value = take_text(next_token_enclosed, true),
 			.is_enclosed = true
 		};
+
 	};
+
 
 	return Items::Item
 	{
-		.type = Tokens::TokenType::Separator,
-		.value = take_text(next_token_enclosed),
+		.type = Tokens::TokenType::Text,
+		.value = take_text(next_token_enclosed, true),
 		
 	};
 	
@@ -80,10 +102,10 @@ char Tokenizer::peek()
 }
 
 
-std::string Tokenizer::take(size_t n = 1)
+std::string Tokenizer::take()
 {
 	std::string_view view = input.substr(0, 1);
-	input.remove_prefix(n);
+	input.remove_prefix(1);
 	return static_cast<std::string>(view);
 
 }
@@ -94,22 +116,37 @@ bool Tokenizer::is_text(const char ch)
 }
 
 
-std::string Tokenizer::take_text(bool enclosed)
+std::string Tokenizer::take_text(bool enclosed, bool remove_prefix)
 {
 	std::string_view::const_iterator boundary;
 	if (enclosed)
 	{
-		auto boundary = std::find_if(input.begin(), input.end(), is_close_bracket);
+		boundary = std::find_if(input.begin(), input.end(), is_close_bracket);
 	}
-	else { auto boundary = std::find_if(input.begin(), input.end(), is_close_bracket); }
+	else { boundary = std::find_if(input.begin(), input.end(), is_separator); }
 
 
 	int n = std::ranges::distance(input.begin(), boundary);
 
 	std::string_view view = input.substr(0, n);
-	input.remove_prefix(n);
+	if (remove_prefix) {
+		input.remove_prefix(n);
+	}
 	return static_cast<std::string>(view);
 
 }
 
 
+Keywords::keyword_t Tokenizer::find_keywords()
+{
+	for (const auto& [key, iden] : Keywords::base_keywords)
+	{
+		if (key == take_text(next_token_enclosed, false)) {
+
+			Parser::item_list.emplace_back(std::pair{ key, iden });
+			return std::pair{ key, iden };
+		}
+
+		return {};
+	}
+}
