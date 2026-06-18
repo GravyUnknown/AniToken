@@ -3,8 +3,8 @@
 
 using namespace Keywords;
 
-Parser::Parser(std::vector<Items::Item> token_list, std::vector<keyword_t>items)
-	: received_tokens(token_list), 
+Parser::Parser(std::shared_ptr<Keywords::item_container_t> items, std::shared_ptr<Items::token_container_t> tokens)
+	: received_tokens(tokens), 
 	received_items(items)
 {
 	AddItem(ParseFileExtension());
@@ -17,14 +17,14 @@ void Parser::AddItem(keyword_t returnValue)
 {
 	if (!returnValue.first.empty())
 	{
-		Items::item_list.push_back(returnValue);
+		Parser::received_items->push_back(returnValue);
 	}
 }
 
 keyword_t Parser::ParseFileExtension()
 {
 
-	Items::Item& item = received_tokens.back();
+	Items::Item& item = received_tokens->back();
 	item.value.remove_prefix(1);
 	return { item.value, Descriptors::FileExtension };
 

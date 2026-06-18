@@ -7,12 +7,12 @@
 
 using namespace Identifiers;
 
-Tokenizer::Tokenizer(std::string_view filename)
-	:input(filename)
+Tokenizer::Tokenizer(std::string_view file, std::shared_ptr<Items::token_container_t>tokens, std::shared_ptr<Keywords::item_container_t>items)
+	:input(file), token_list(tokens), items_list(items)
 {
 	while(!input.empty())
 	{
-		token_list.emplace_back(Tokenize());
+		token_list->emplace_back(Tokenize());
 	}
 
 }
@@ -143,7 +143,7 @@ Keywords::keyword_t Tokenizer::find_keywords()
 	{
 		if (key == take_text(next_token_enclosed, false)) {
 
-			Parser::item_list.emplace_back(std::pair{ key, iden });
+			Tokenizer::items_list->emplace_back(std::pair{ key, iden });
 			return std::pair{ key, iden };
 		}
 

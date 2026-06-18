@@ -1,17 +1,20 @@
 #pragma once
 #include <string>
+#include <memory>
 #include "Items.h"
 #include "Parser.h"
+
 
 
 class Tokenizer
 {
 public:
-	Tokenizer(std::string_view file, std::vector<Items::Item>tokens);
-	Items::Item Tokenize();
-	static inline std::vector<Items::Item> token_list;
+	Tokenizer(std::string_view file, std::shared_ptr<Items::token_container_t>tokens, std::shared_ptr<Keywords::item_container_t>items);
+	Items::Item Tokenize();	
 private:
-	std::string_view input;
+	std::string_view input{};
+	std::shared_ptr<Items::token_container_t> token_list;
+	std::shared_ptr<Keywords::item_container_t> items_list;
 	char separator = '\0';
 	bool next_token_enclosed = false;
 	auto TokenizeKeywords();
