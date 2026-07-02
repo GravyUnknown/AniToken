@@ -16,6 +16,7 @@ namespace Keywords {
 	};
 
 	using keyword_t = std::pair<std::string_view, Descriptors>;
+	using keyword_string_t = std::pair<std::string, Descriptors>;
 
 	
 	
@@ -28,7 +29,7 @@ static constexpr std::array<keyword_t, 3> base_keywords = { {
 } };
 
 
-using item_container_t = std::vector<keyword_t>;
+using item_container_t = std::vector<keyword_string_t>;
 
 
 

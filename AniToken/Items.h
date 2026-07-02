@@ -8,7 +8,7 @@ namespace Items
 	struct Item
 	{
 		Tokens::TokenType type;
-		std::string_view value;
+		std::string value;
 		bool is_enclosed = false;
 		bool is_identified = true;
 

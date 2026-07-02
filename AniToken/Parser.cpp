@@ -13,7 +13,7 @@ Parser::Parser(std::shared_ptr<Keywords::item_container_t> items, std::shared_pt
 }
 
 
-void Parser::AddItem(keyword_t returnValue)
+void Parser::AddItem(keyword_string_t returnValue)
 {
 	if (!returnValue.first.empty())
 	{
@@ -21,17 +21,16 @@ void Parser::AddItem(keyword_t returnValue)
 	}
 }
 
-keyword_t Parser::ParseFileExtension()
+keyword_string_t Parser::ParseFileExtension()
 {
 
 	Items::Item& item = received_tokens->back();
-	item.value.remove_prefix(1);
-	return { item.value, Descriptors::FileExtension };
+	return { item.value.substr(1), Descriptors::FileExtension};
 
 	
 }
 
-keyword_t Parser::ParseEpisodeNumber()
+keyword_string_t Parser::ParseEpisodeNumber()
 {
 	return {};
 }

@@ -67,7 +67,7 @@ Items::Item Tokenizer::Tokenize()
 		return Items::Item
 		{
 			.type = static_cast<Tokens::TokenType>(type),
-			.value = key,
+			.value = static_cast<std::string>(key),
 			.is_enclosed = next_token_enclosed,
 			.is_identified = true
 		};
@@ -104,9 +104,9 @@ char Tokenizer::peek()
 
 std::string Tokenizer::take()
 {
-	std::string_view view = input.substr(0, 1);
+	std::string view = static_cast<std::string>(input.substr(0, 1));
 	input.remove_prefix(1);
-	return static_cast<std::string>(view);
+	return (view);
 
 }
 
@@ -126,13 +126,13 @@ std::string Tokenizer::take_text(bool enclosed, bool remove_prefix)
 	else { boundary = std::find_if(input.begin(), input.end(), is_separator); }
 
 
-	int n = std::ranges::distance(input.begin(), boundary);
+	auto n = std::ranges::distance(input.begin(), boundary);
 
-	std::string_view view = input.substr(0, n);
+	std::string view = static_cast<std::string>(input.substr(0, n));
 	if (remove_prefix) {
 		input.remove_prefix(n);
 	}
-	return static_cast<std::string>(view);
+	return view;
 
 }
 
@@ -147,6 +147,7 @@ Keywords::keyword_t Tokenizer::find_keywords()
 			return std::pair{ key, iden };
 		}
 
-		return {};
+	
 	}
+	return {};
 }

@@ -13,8 +13,8 @@ public:
 private:
 	std::shared_ptr<Keywords::item_container_t> received_items;
 	std::shared_ptr<Items::token_container_t> received_tokens;
-	Keywords::keyword_t ParseFileExtension();
-	Keywords::keyword_t ParseEpisodeNumber();	
-	void AddItem(Keywords::keyword_t returnValue);
+	Keywords::keyword_string_t ParseFileExtension();
+	Keywords::keyword_string_t ParseEpisodeNumber();	
+	void AddItem(Keywords::keyword_string_t returnValue);
 	
 };
