@@ -3,7 +3,7 @@
 
 using namespace Keywords;
 
-Parser::Parser(std::shared_ptr<Keywords::item_container_t> items, std::shared_ptr<Items::token_container_t> tokens)
+Parser::Parser(Keywords::item_container_t& items, const Items::token_container_t& tokens)
 	: received_tokens(tokens), 
 	received_items(items)
 {
@@ -17,14 +17,14 @@ void Parser::AddItem(keyword_string_t returnValue)
 {
 	if (!returnValue.first.empty())
 	{
-		Parser::received_items->push_back(returnValue);
+		Parser::received_items.emplace_back(returnValue);
 	}
 }
 
 keyword_string_t Parser::ParseFileExtension()
 {
 
-	Items::Item& item = received_tokens->back();
+	const Items::Item& item = received_tokens.back();
 	return { item.value.substr(1), Descriptors::FileExtension};
 
 	

@@ -7,12 +7,13 @@
 
 using namespace Identifiers;
 
-Tokenizer::Tokenizer(std::string_view file, std::shared_ptr<Items::token_container_t>tokens, std::shared_ptr<Keywords::item_container_t>items)
+Tokenizer::Tokenizer(const std::string_view file, Items::token_container_t& tokens, Keywords::item_container_t& items)
 	:input(file), token_list(tokens), items_list(items)
 {
+	token_list.reserve(30);
 	while(!input.empty())
 	{
-		token_list->emplace_back(Tokenize());
+		token_list.emplace_back(Tokenize());
 	}
 
 }
@@ -23,7 +24,7 @@ Items::Item Tokenizer::Tokenize()
 	if (is_open_bracket(current))
 	{
 		next_token_enclosed = true;
-		return Items::Item{
+		return {
 			.type = Tokens::TokenType::OpenBracket,
 			.value = take()
 		};
@@ -32,7 +33,7 @@ Items::Item Tokenizer::Tokenize()
 	if (is_close_bracket(current))
 	{
 		next_token_enclosed = false;
-		return Items::Item{
+		return {
 			.type = Tokens::TokenType::CloseBracket,
 			.value = take()
 		};
@@ -51,7 +52,7 @@ Items::Item Tokenizer::Tokenize()
 
 	if (current == separator)
 	{
-		return Items::Item
+		return 
 		{
 			.type = Tokens::TokenType::Separator,
 			.value = take(),
@@ -64,7 +65,7 @@ Items::Item Tokenizer::Tokenize()
 
 	if (const auto& [key, type] = find_keywords(); !key.empty())
 	{
-		return Items::Item
+		return 
 		{
 			.type = static_cast<Tokens::TokenType>(type),
 			.value = static_cast<std::string>(key),
@@ -75,7 +76,7 @@ Items::Item Tokenizer::Tokenize()
 
 	if (next_token_enclosed)
 	{
-		return Items::Item
+		return 
 		{
 			.type = Tokens::TokenType::Text,
 			.value = take_text(next_token_enclosed, true),
@@ -85,7 +86,7 @@ Items::Item Tokenizer::Tokenize()
 	};
 
 
-	return Items::Item
+	return 
 	{
 		.type = Tokens::TokenType::Text,
 		.value = take_text(next_token_enclosed, true),
@@ -143,7 +144,7 @@ Keywords::keyword_t Tokenizer::find_keywords()
 	{
 		if (key == take_text(next_token_enclosed, false)) {
 
-			Tokenizer::items_list->emplace_back(std::pair{ key, iden });
+			Tokenizer::items_list.emplace_back(std::pair{ key, iden });
 			return std::pair{ key, iden };
 		}
 

@@ -9,12 +9,12 @@
 class Tokenizer
 {
 public:
-	Tokenizer(std::string_view file, std::shared_ptr<Items::token_container_t>tokens, std::shared_ptr<Keywords::item_container_t>items);
+	Tokenizer(std::string_view file, Items::token_container_t& tokens, Keywords::item_container_t& items);
 	Items::Item Tokenize();	
 private:
 	std::string_view input{};
-	std::shared_ptr<Items::token_container_t> token_list;
-	std::shared_ptr<Keywords::item_container_t> items_list;
+	Items::token_container_t& token_list;
+	Keywords::item_container_t& items_list;
 	char separator = '\0';
 	bool next_token_enclosed = false;
 	auto TokenizeKeywords();
