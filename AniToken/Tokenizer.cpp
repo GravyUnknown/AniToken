@@ -132,17 +132,18 @@ std::string Tokenizer::take_text(bool enclosed, bool remove_prefix)
 	std::string view = static_cast<std::string>(input.substr(0, n));
 	if (remove_prefix) {
 		input.remove_prefix(n);
+		
 	}
 	return view;
-
 }
 
 
 Keywords::keyword_t Tokenizer::find_keywords()
 {
+	std::string returned_text = take_text(next_token_enclosed, false);
 	for (const auto& [key, iden] : Keywords::base_keywords)
 	{
-		if (key == take_text(next_token_enclosed, false)) {
+		if (key == returned_text) {
 
 			Tokenizer::items_list.emplace_back(std::pair{ key, iden });
 			return std::pair{ key, iden };

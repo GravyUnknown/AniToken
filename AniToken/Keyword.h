@@ -11,7 +11,9 @@ namespace Keywords {
 		SeriesName,
 		EpisodeTitle,
 		ReleaseGroup,
-		FileExtension
+		FileExtension,
+		ReleaseYear,
+		Undefined
 
 	};
 

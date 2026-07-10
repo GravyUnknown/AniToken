@@ -11,7 +11,8 @@ public:
 		CloseBracket,
 		Delimiter,
 		Text,
-		Separator
+		Separator,
+		Identified
 	
 	};
 
