@@ -38,6 +38,7 @@ Parser::Parser(Keywords::item_container_t& items, Items::token_container_t& toke
 	AddItem(ParseFileExtension());
 	AddItem(ParseReleaseGroup());
 	AddItem(ParseReleaseYear());
+	AddItem(ParseEpisodeNumber());
 }
 
 
@@ -108,7 +109,8 @@ keyword_string_t Parser::ParseReleaseYear()
 			.type = release_year_candidate->type,
 			.elementtype = Descriptors::ReleaseYear,
 			.value = release_year_candidate->value,
-			.is_identified = true
+			.is_enclosed = true,
+			.is_identified = true,
 
 		};
 		return { release_year_candidate->value, Descriptors::ReleaseYear };
@@ -120,7 +122,18 @@ keyword_string_t Parser::ParseReleaseYear()
 
 keyword_string_t Parser::ParseEpisodeNumber()
 {
-	constexpr auto keywords = 0;
-	(void)keywords;
-	return {};
+	auto episode_number_probable = std::find_if(received_tokens.begin(), received_tokens.end(),
+		[](const Items::Item& i)
+		{return std::isdigit(i.value.front()) && !(i.is_enclosed); });
+
+	if (episode_number_probable == received_tokens.end())
+	{
+		return {};
+	}
+	std::string retreived_episode_number = episode_number_probable->value.substr(0, episode_number_probable->value.find("v"));
+
+
+	return { retreived_episode_number, Descriptors::EpisodeNumber };
+		
+
 }

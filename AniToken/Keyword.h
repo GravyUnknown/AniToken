@@ -10,6 +10,7 @@ namespace Keywords {
 		VideoResolution,
 		SeriesName,
 		EpisodeTitle,
+		EpisodeNumber,
 		ReleaseGroup,
 		FileExtension,
 		ReleaseYear,
